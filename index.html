@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Cadastro Rápido</title>
+<meta name="theme-color" content="#f97316" />
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+    <!-- CARD DO FORM -->
+    <section class="card">
+      <!-- LOGO -->
+      <div class="logo-marca">
+        <img class="img-logo" src="img/logo.png" alt="Logo Marca Acrediitar">
+      </div>
+
+
+      <h1>Cadastro rápido</h1>
+      <p class="sub">Preencha e entre em contato direto com nossa equipe no WhatsApp.</p>
+
+      <form id="uiForm" novalidate>
+        <label for="nome">Nome *</label>
+        <input id="nome" placeholder="Ex.: Maria Souza" required>
+
+        <label for="telefone">Telefone (WhatsApp) *</label>
+        <input id="telefone" inputmode="tel" placeholder="DDD + número" required>
+
+        <label for="assunto">Assunto *</label>
+        <select id="assunto" required>
+          <option value="">Selecione...</option>
+          <option>CLT</option>
+          <option>FGTS</option>
+          <option>Energia</option>
+        </select>
+
+        <button type="submit" class="btn" aria-label="Fale conosco">
+          <svg class="wa" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.5.8 4.9 2 6.8L4 29l7.4-2c1.7 1.6 3.1 2 4.6 2 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 22c-1.3 0-2.6-.3-3.7-1l-.3-.1-4.4 1.2 1.2-4.3-.2-.3C7.2 19.1 7 17.1 7 15c0-5 4-9 9-9s9 4 9 9-4 9-9 9z"/></svg>
+          Fale conosco
+        </button>
+
+        <small>Ao enviar, seus dados são registrados de forma segura e você será direcionado ao grupo no WhatsApp.</small>
+      </form>
+
+      <!-- envio invisível para Google Forms -->
+      <iframe id="sink" name="sink" title="invisible-submit"></iframe>
+      <form id="gform"
+        action="https://docs.google.com/forms/d/e/1FAIpQLSdIQ8c8EhFwfmyni3Fnsko5rxVqG-ulH5EZIGSs10HWT-HNDA/formResponse"
+        method="POST" target="sink">
+        <input type="hidden" name="entry.1915443417" id="f_nome">
+        <input type="hidden" name="entry.582766889"  id="f_telefone">
+        <input type="hidden" name="entry.2095427694" id="f_assunto">
+      </form>
+    </section>
+
+    <!-- BENEFÍCIOS LATERAIS -->
+    <aside class="card side">
+      <div class="badge">⚡ Atendimento rápido</div>
+      <div class="list">
+        <div class="item">
+          <div class="check">✓</div>
+          <div><b>Resposta imediata</b><br><span>Converse com nossa equipe sem burocracia.</span></div>
+        </div>
+        <div class="item">
+          <div class="check">✓</div>
+          <div><b>Equipe especializada</b><br><span>Suporte para CLT, FGTS e Energia.</span></div>
+        </div>
+        <div class="item">
+          <div class="check">✓</div>
+          <div><b>Transparência total</b><br><span>Você acompanha tudo pelo WhatsApp.</span></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+<script>
+  const GROUP_LINK = "https://chat.whatsapp.com/IcKEKkRFqK85V4osfX7nxX?mode=ems_copy_c";
+  const digitsOnly = s => (s||"").replace(/\D+/g,"");
+
+  document.getElementById("uiForm").addEventListener("submit",(e)=>{
+    e.preventDefault();
+    const nome = document.getElementById("nome").value.trim();
+    const telefone = digitsOnly(document.getElementById("telefone").value.trim());
+    const assunto = document.getElementById("assunto").value;
+
+    if(!nome || !telefone || !assunto){ alert("Preencha todos os campos."); return; }
+    if(telefone.length < 10){ alert("Informe DDD + número (ex.: 83999999999)."); return; }
+
+    document.getElementById("f_nome").value = nome;
+    document.getElementById("f_telefone").value = telefone;
+    document.getElementById("f_assunto").value = assunto;
+    document.getElementById("gform").submit();
+
+    setTimeout(()=>{ window.location.href = GROUP_LINK; }, 320);
+  });
+</script>
+</body>
+</html>
