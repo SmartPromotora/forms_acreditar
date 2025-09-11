@@ -4,37 +4,38 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Cadastro Rápido</title>
-  <meta name="theme-color" content="#f97316" />
+  <meta name="theme-color" content="#0b0b0c" />
   <link rel="stylesheet" href="style.css">
+  <link rel="preload" href="img/logo.png" as="image">
 </head>
 <body>
 
   <div class="container">
     <!-- ===== CARD DO FORM ===== -->
-    <section class="card">
+    <section class="card" aria-labelledby="titulo">
       <!-- LOGO -->
       <div class="logo-marca">
-        <img class="img-logo" src="img/logo.png" alt="Logo Marca Acrediitar">
+        <img class="img-logo" src="img/logo.png" alt="Logo Marca" width="160" height="56" decoding="async">
       </div>
 
-      <h1>Cadastro rápido</h1>
+      <h1 id="titulo">Cadastro rápido</h1>
       <p class="sub">Preencha e entre em contato direto com nossa equipe no WhatsApp.</p>
 
       <!-- FORM PRINCIPAL -->
       <form id="uiForm" novalidate>
         <div class="field">
           <label for="nome">Nome *</label>
-          <input id="nome" placeholder="Ex.: Maria Souza" required>
+          <input id="nome" name="nome" placeholder="Ex.: Maria Souza" required autocomplete="name" maxlength="100">
         </div>
 
         <div class="field">
           <label for="telefone">Telefone (WhatsApp) *</label>
-          <input id="telefone" inputmode="tel" placeholder="DDD + número" required>
+          <input id="telefone" name="telefone" inputmode="tel" placeholder="DDD + número" required autocomplete="tel">
         </div>
 
         <div class="field">
           <label for="assunto">Assunto *</label>
-          <select id="assunto" required>
+          <select id="assunto" name="assunto" required>
             <option value="">Selecione...</option>
             <option>CLT</option>
             <option>FGTS</option>
@@ -42,16 +43,18 @@
           </select>
         </div>
 
-        <!-- Botão normal (desktop / tablet) -->
+        <!-- Botão padrão (desktop e mobile) -->
         <button type="submit" class="btn btn-main" aria-label="Fale conosco">
-          <svg class="wa" viewBox="0 0 32 32" aria-hidden="true">
+          <svg class="wa" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
             <path d="M16 3C9.4 3 4 8.4 4 15c0 2.5.8 4.9 2 6.8L4 29l7.4-2c1.7 1.6 3.1 2 4.6 2 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 22c-1.3 0-2.6-.3-3.7-1l-.3-.1-4.4 1.2 1.2-4.3-.2-.3C7.2 19.1 7 17.1 7 15c0-5 4-9 9-9s9 4 9 9-4 9-9 9z"/>
           </svg>
           Fale conosco
         </button>
 
+        <!-- Aviso de segurança com cadeado -->
         <small class="seguro">
-          Ao enviar, seus dados são registrados de forma segura e você será direcionado ao grupo no WhatsApp.
+          <span class="icon-lock" aria-hidden="true"></span>
+          Ao enviar, seus dados são registrados de forma segura e você será direcionado ao WhatsApp.
         </small>
       </form>
 
@@ -63,16 +66,8 @@
         <input type="hidden" name="entry.1915443417" id="f_nome">
         <input type="hidden" name="entry.582766889"  id="f_telefone">
         <input type="hidden" name="entry.2095427694" id="f_assunto">
+        <input type="text" name="entry.antiBot" id="hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;">
       </form>
-
-      <!-- CTA fixo para MOBILE (sem JS) -->
-      <button id="ctaSticky" type="submit" form="uiForm"
-              class="btn cta-sticky" aria-label="Fale conosco (fixo)">
-        <svg class="wa" viewBox="0 0 32 32" aria-hidden="true">
-          <path d="M16 3C9.4 3 4 8.4 4 15c0 2.5.8 4.9 2 6.8L4 29l7.4-2c1.7 1.6 3.1 2 4.6 2 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 22c-1.3 0-2.6-.3-3.7-1l-.3-.1-4.4 1.2 1.2-4.3-.2-.3C7.2 19.1 7 17.1 7 15c0-5 4-9 9-9s9 4 9 9-4 9-9 9z"/>
-        </svg>
-        Fale conosco
-      </button>
     </section>
 
     <!-- ===== BENEFÍCIOS LATERAIS ===== -->
@@ -80,42 +75,63 @@
       <div class="badge">⚡ Atendimento rápido</div>
       <div class="list">
         <div class="item">
-          <div class="check">✓</div>
+          <div class="check" aria-hidden="true">✓</div>
           <div><b>Resposta imediata</b><br><span>Converse com nossa equipe sem burocracia.</span></div>
         </div>
         <div class="item">
-          <div class="check">✓</div>
+          <div class="check" aria-hidden="true">✓</div>
           <div><b>Equipe especializada</b><br><span>Suporte para CLT, FGTS e Energia.</span></div>
         </div>
         <div class="item">
-          <div class="check">✓</div>
+          <div class="check" aria-hidden="true">✓</div>
           <div><b>Transparência total</b><br><span>Você acompanha tudo pelo WhatsApp.</span></div>
         </div>
       </div>
     </aside>
   </div>
 
-<!-- JS opcional (mantido para Google Forms + redireciono) -->
-<script>
-  const GROUP_LINK = "https://chat.whatsapp.com/IcKEKkRFqK85V4osfX7nxX?mode=ems_copy_c";
-  const digitsOnly = s => (s||"").replace(/\D+/g,"");
+  <!-- JS: normaliza telefone, envia Forms e redireciona pro WhatsApp -->
+  <script>
+    const WHATS_NUMBER = "558391006444"; // +55 83 9100-6444
+    const digitsOnly = s => (s||"").replace(/\D+/g,"");
 
-  document.getElementById("uiForm").addEventListener("submit",(e)=>{
-    e.preventDefault();
-    const nome = document.getElementById("nome").value.trim();
-    const telefone = digitsOnly(document.getElementById("telefone").value.trim());
-    const assunto = document.getElementById("assunto").value;
+    // máscara leve (opcional)
+    (function(){
+      const tel = document.getElementById("telefone");
+      if(!tel) return;
+      tel.addEventListener("input", (e) => {
+        const d = digitsOnly(e.target.value).slice(0,11);
+        if (d.length <= 10) e.target.value = d.replace(/^(\d{0,2})(\d{0,4})(\d{0,4}).*/, (m,a,b,c)=>[a&&`(${a}`, a&&`) `, b, b&&"-", c].filter(Boolean).join(""));
+        else e.target.value = d.replace(/^(\d{0,2})(\d{0,1})(\d{0,4})(\d{0,4}).*/, (m,a,b,c,d2)=>[a&&`(${a}`, a&&`) `, b, " ", c, c&&"-", d2].filter(Boolean).join(""));
+      });
+    })();
 
-    if(!nome || !telefone || !assunto){ alert("Preencha todos os campos."); return; }
-    if(telefone.length < 10){ alert("Informe DDD + número (ex.: 83999999999)."); return; }
+    document.getElementById("uiForm").addEventListener("submit",(e)=>{
+      e.preventDefault();
+      const nome = document.getElementById("nome").value.trim();
+      const telefone = digitsOnly(document.getElementById("telefone").value.trim());
+      const assunto = document.getElementById("assunto").value;
+      const hp = document.getElementById("hp").value;
 
-    document.getElementById("f_nome").value = nome;
-    document.getElementById("f_telefone").value = telefone;
-    document.getElementById("f_assunto").value = assunto;
-    document.getElementById("gform").submit();
+      if (hp) return; // honeypot anti-bot
+      if(!nome || !telefone || !assunto){ alert("Preencha todos os campos."); return; }
+      if(telefone.length < 10){ alert("Informe DDD + número (ex.: 83999999999)."); return; }
 
-    setTimeout(()=>{ window.location.href = GROUP_LINK; }, 320);
-  });
-</script>
+      // envia pro Google Forms
+      document.getElementById("f_nome").value = nome;
+      document.getElementById("f_telefone").value = telefone;
+      document.getElementById("f_assunto").value = assunto;
+      document.getElementById("gform").submit();
+
+      // mensagem personalizada
+      const mensagem = `Olá, estou interessado no consignado ${assunto} pode me ajudar`;
+
+      // abre WhatsApp
+      setTimeout(()=>{
+        const waURL = `https://wa.me/${WHATS_NUMBER}?text=${encodeURIComponent(mensagem)}`;
+        window.location.href = waURL;
+      }, 320);
+    });
+  </script>
 </body>
 </html>
